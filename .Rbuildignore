@@ -1,2 +1,4 @@
 ^useXml\.Rproj$
 ^\.Rproj\.user$
+^doc$
+^Meta$

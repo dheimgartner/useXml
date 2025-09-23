@@ -131,9 +131,11 @@ What's the difference to something like this:
 </person>
 \end{xmlcode}
 %
-I.e., we are essentially contrasting \textbf{attributes} vs. \textbf{child elements} in \XML...
+I.e., we are essentially contrasting \textbf{attributes} vs. \textbf{child elements} in \XML... Which one is to be preferred? I think attributes should be used to indicate that the value is modified in some way. A classical example would be a style attribute, i.e., an additional peace of information that is not the part of the main information content, but specifies how this main information is presented (e.g., \xml{<text size="12">foo</text>}).
 
 \section{XML schema}
+
+\url{https://www.w3schools.com/xml/schema_intro.asp}
 
 \leftmarginpar{What is an XML schema?}
 \begin{itemize}
@@ -145,6 +147,44 @@ I.e., we are essentially contrasting \textbf{attributes} vs. \textbf{child eleme
 \marginpar{The ``x'' in \code{.docx}, \code{.xlsx}, etc. actually is a reminecense of \XML. Change the ending of any such file to \code{.zip} and extract it to see that it is just a collection of files and in particular contains an XML representing the document structure/data.}
 %
 Excel + \XML~schema = \XML?
+
+\section{XML and R}
+
+\leftmarginpar{Basic example}
+% maybe use examples from above...
+<<>>=
+library(xml2)
+xml <- '
+<people>
+  <person>
+    <name>Daniel</name>
+    <age>33</age>
+  </person>
+  <person>
+    <name>Adrian</name>
+    <age>73</age>
+  </person>
+</people>
+'
+
+xml_parsed <- xml2::read_xml(xml)
+xml2::as_list(xml_parsed)
+@
+%
+So without a Schema, the parser does not know that age is an integer...
+
+\leftmarginpar{Providing an XML Schema}
+
+\leftmarginpar{Querying with xPath}
+It is actually ``impossible'' to access the second person (Adrian) in the list above. Let's use xPath!
+<<>>=
+person_2 <- xml2::xml_find_all(xml_parsed, xpath = "/people/person[2]")
+xml2::xml_find_all(xml_parsed, xpath = "/people/person[last()]")  # equivalent
+@
+
+
+\leftmarginpar{The magic of XSLT}
+Transforming to HTML!
 
 \section{Now it's your turn!}
 

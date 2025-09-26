@@ -72,13 +72,19 @@ What do you think the above information represents? What could you do with the a
 \item Foo.
 \item What is the purpose?
 \begin{itemize}
-\item Storing information/state in a generic universal (meta-) representation.
+\item Storing and transporting information/state in a generic universal (meta-) representation.
 \item Easily transferable from one process to another (serializing and deserializing).
+\item Both human- and machine-readable.
+\item \XML does not do anything (it's just information wrapped in tags)!
 \item Object (in JS) $\Rightarrow$ \XML $\Rightarrow$ Object (in Python).
 \item Or similarly: Orbeon Form Builder $\Rightarrow$ \XML $\Rightarrow$ Orbeon Form Runner.
 \end{itemize}
 \item What is markup? ``marking something up'' has for me the connotation of providing extra information...
 \item Extensible in what sense?
+\item Difference to \proglang{HTML}?
+\begin{itemize}
+\item \XML focusses on what data \textbf{is}, \proglang{HTML} on how data \textbf{looks}.
+\end{itemize}
 \item Difference to \proglang{JSON}?
 \end{itemize}
 

@@ -35,6 +35,7 @@
 \newcommand{\use}[1]{\code{#1}}
 
 \newcommand{\XML}{\proglang{XML}}
+\newcommand{\XPath}{\proglang{XPath}}
 
 \SweaveOpts{engine=R, eps=FALSE, keep.source = TRUE}
 <<preliminaries, echo=FALSE, results=hide>>=
@@ -54,10 +55,12 @@ library("useXml")
 This is \XML:
 %
 \begin{xmlcode}
- <?xml version="1.0" encoding="UTF-8"?>
-<note>
-  <to>Tove</to>
-  <from>Jani</from>
+<!-- prolog -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- data -->
+<note>                         <!-- root element -->
+  <to>Tove</to>                <!-- child of root -->
+  <from>Jani</from>            <!-- sibling to above element-->
   <heading>Reminder</heading>
   <body>Don't forget me this weekend!</body>
 </note>
@@ -65,9 +68,13 @@ This is \XML:
 %
 What do you think the above information represents? What could you do with the above representation?
 
+In the remainder, we will sometimes omit the prolog \xml{<?xml version="1.0" encoding="UTF-8"?>} to save some space...
+
+\leftmarginpar{Keyword}
+
 \section{Extensible markup what?}
 
-\leftmarginpar{What is \proglang{XML}}
+\subsection{What is \proglang{XML}}
 \begin{itemize}
 \item Foo.
 \item What is the purpose?
@@ -75,7 +82,7 @@ What do you think the above information represents? What could you do with the a
 \item Storing and transporting information/state in a generic universal (meta-) representation.
 \item Easily transferable from one process to another (serializing and deserializing).
 \item Both human- and machine-readable.
-\item \XML does not do anything (it's just information wrapped in tags)!
+\item \XML~does not do anything (it's just information wrapped in tags)!
 \item Object (in JS) $\Rightarrow$ \XML $\Rightarrow$ Object (in Python).
 \item Or similarly: Orbeon Form Builder $\Rightarrow$ \XML $\Rightarrow$ Orbeon Form Runner.
 \end{itemize}
@@ -83,10 +90,15 @@ What do you think the above information represents? What could you do with the a
 \item Extensible in what sense?
 \item Difference to \proglang{HTML}?
 \begin{itemize}
-\item \XML focusses on what data \textbf{is}, \proglang{HTML} on how data \textbf{looks}.
+\item \XML~focusses on what data \textbf{is}, \proglang{HTML} on how data \textbf{looks}.
+\item \XML~has no predefined tags (the author must define both the tags and the document structure).
+\item \XML~is often a complement to \proglang{HTML}.
 \end{itemize}
 \item Difference to \proglang{JSON}?
+\item Many \XML~formats exist (i.e., agreed standard to communicate a piece of information such as a financial transaction).
 \end{itemize}
+
+For me it helps to think of \XML~as a language-independent, human-readable way to represent an object.
 
 \begin{xmlcode}
  <?xml version="1.0" encoding="UTF-8"?>
@@ -98,29 +110,53 @@ What do you think the above information represents? What could you do with the a
 %
 What datatype should \xml{<age>33</age>} be? We need a way to say: ``Hey, if you parse (read) the \XML-File (which is just a text file) and consume the data, be aware that 'age' is an integer!''. Whereas \proglang{JSON} embodies that information directly in the source, \XML~does not...
 
-\marginpar{This is just a marginpar...}
-
-\leftmarginpar{Why should we care/use it?}
+\subsection{Why should we care/use it?}
 \begin{itemize}
 \item Foo.
 \end{itemize}
 
-\leftmarginpar{Some terminology}
-\begin{itemize}
-\item \proglang{xPath}, \proglang{XML Schema}, \proglang{XSLT}, \proglang{DTD}, etc.
-\end{itemize}
-
-\leftmarginpar{What will I learn?}
+\subsection{What will I learn?}
 \begin{itemize}
 \item Foo.
 \item Learn where to learn more!
 \end{itemize}
 
-\section{Let's get started}
+\section{Some terminology}
+\begin{itemize}
+\item \proglang{XPath}, \proglang{XML Schema}, \proglang{XSLT}, \proglang{DTD}, etc.
+\item \XML~tree (Root element, element, parent, child, siblings), attribute,
+\item An \XML~document is said to be ``well formed'' if it conforms to the basic syntax rules.
+\end{itemize}
 
-In the remainder, we will omit the header \xml{<?xml version="1.0" encoding="UTF-8"?>} to save some space...
+\section{Some XML syntax}
+\begin{itemize}
+\item \XML~documents must contain one root element that is the parent of all other elements.
+\item \xml{<!-- This is a comment -->}
+\item Element names can not contain spaces.
+\item Avoid \code{-}, \code{.} and \code{:} in element names.
+\item All \XML-elements must have a closing tag (they can be \xml{<selfClosing/>})
+\item Some characters have special meaning (e.g., the \code{<} is interpreted as the start of a new element) and must be replaced by an entity reference (e.g., \code{\&lt;}).
+\item An element can contain: text, attributes, other elements, or a mix of these.
+\end{itemize}
 
-\leftmarginpar{Attributes}
+Here are the five pre-defined entity references:
+
+\begin{table}[H]
+\begin{tabular}{lll}
+\code{\&lt;} & \code{<} & less than\\
+\code{\&gt;} & \code{>} & greater than\\
+\code{\&amp;} & \code{\&} & ampersand\\
+\code{\&apos;} & \code{'} & apostrophe\\
+\code{\&quot;} & \code{"} & quotation mark\\
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=.7\textwidth]{figures/xml-tree}
+\end{figure}
+
+\section{Attributes}
 Let's revisit the person representation from above. Do we need a tag for any information?
 %
 \begin{xmlcode}
@@ -137,13 +173,88 @@ What's the difference to something like this:
 </person>
 \end{xmlcode}
 %
-I.e., we are essentially contrasting \textbf{attributes} vs. \textbf{child elements} in \XML... Which one is to be preferred? I think attributes should be used to indicate that the value is modified in some way. A classical example would be a style attribute, i.e., an additional peace of information that is not the part of the main information content, but specifies how this main information is presented (e.g., \xml{<text size="12">foo</text>}).
+I.e., we are essentially contrasting \textbf{attributes} vs. \textbf{child elements} in \XML... Which one is to be preferred? I think attributes should be used to indicate that the value is modified in some way (metadata, i.e., data about the data). A classical example would be a style attribute, i.e., an additional peace of information that is not the part of the main information content, but specifies how this main information is presented (e.g., \xml{<text size="12">foo</text>}).
+
+\section{XML namespaces}
+
+\XML~namespaces provide a method to avoid element name conflicts.
+
+\begin{itemize}
+\item Use prefixes to namespace elements.
+\item Define the namespace by an \code{xmlns} attribute in the start tag of an element (or the root element).
+\item The URI is not used by the parser to look up information -- it is just used to give the namespace a unique name (however, companies often use the URI to point to a web page containing namespace information).
+\item A default namespace saves us from using prefixes in all the child elements \xml{<... xmlns="namespaceURI">}.
+\end{itemize}
+
+Here is an example:
+
+\begin{xmlcode}
+<root xmlns:h="http://www.w3.org/TR/html4/"
+xmlns:f="https://www.w3schools.com/furniture">
+
+<h:table>
+  <h:tr>
+    <h:td>Apples</h:td>
+    <h:td>Bananas</h:td>
+  </h:tr>
+</h:table>
+
+<f:table>
+  <f:name>African Coffee Table</f:name>
+  <f:width>80</f:width>
+  <f:length>120</f:length>
+</f:table>
+
+<!-- using a default ns -->
+<table xmlns="https://www.w3schools.com/furniture">
+  <name>African Coffee Table</name>
+  <width>80</width>
+  <length>120</length>
+</table>
+
+</root>
+\end{xmlcode}
+
+\section{XPath}
+
+\XPath~can be used to navigate through elements and attributes in an \XML~document. It's purpose is to \textbf{select} part of an \XML~document.
+
+\marginpar{In Orbeon I think the purpose of \XPath~being a query language is a little hidden as we use it to define conditions for triggers (e.g., to trigger an error, flag a question as required, etc.). Usually, we simply select an element (\code{\$questionLabel})} and compare it to a value (i.e., we use one or two selectors and a comparison operator).
+
+\begin{itemize}
+\item \XPath~uses path expressions to navigate an \XML~document (much like navigating the file tree...).
+\item \XPath~contains a library of standard functions.
+\end{itemize}
+
+\subsection{\XPath~syntax}
+
+Again, much like navigating the file tree in the terminal, the following path expressions are available:
+
+\begin{table}[H]
+\begin{tabular}{lp{9.6cm}}
+\code{nodename} &	Selects all nodes with the name ``nodename''.\\
+\code{/} & Selects from the root node.\\
+\code{//} & Selects nodes in the document from the current node that match the selection no matter where they are.\\
+\code{.} & Selects the current node.\\
+\code{..} & Selects the parent of the current node.\\
+\code{@} & Selects attributes.\\
+\end{tabular}
+\end{table}
+
+Here are some examples (with a context \XML~document) that get you going: \url{https://www.w3schools.com/xml/xml_xpath.asp}
+
+
+
+PROCEED HERE: \url{https://www.w3schools.com/xml/xml_xpath.asp}
+
+
+
 
 \section{XML schema}
 
 \url{https://www.w3schools.com/xml/schema_intro.asp}
 
-\leftmarginpar{What is an XML schema?}
+\subsection{What is an XML schema?}
 \begin{itemize}
 \item Remember what we've said earlier about the data types?
 \item An \XML~schema describes the structure of an \XML~document and is itself written as \XML. Kind of elegant, no?
@@ -156,7 +267,9 @@ Excel + \XML~schema = \XML?
 
 \section{XML and R}
 
-\leftmarginpar{Basic example}
+Remember: ``\XML~does not do anything'' (it is just a structured text file). Therefore we need a parser that reads the text and creates the XML DOM (document object model). Various methods then exist to interact with this object (or you can define new methods)... So the XML DOM is a standard object representation of the \XML~text that allows you to easily access and manipulate information.
+
+\subsection{Basic example}
 % maybe use examples from above...
 <<>>=
 library(xml2)
@@ -179,17 +292,17 @@ xml2::as_list(xml_parsed)
 %
 So without a Schema, the parser does not know that age is an integer...
 
-\leftmarginpar{Providing an XML Schema}
+\subsection{Providing an XML Schema}
 
-\leftmarginpar{Querying with xPath}
-It is actually ``impossible'' to access the second person (Adrian) in the list above. Let's use xPath!
+\subsection{Querying with XPath}
+It is actually ``impossible'' to access the second person (Adrian) in the list above. Let's use \XPath!
 <<>>=
 person_2 <- xml2::xml_find_all(xml_parsed, xpath = "/people/person[2]")
 xml2::xml_find_all(xml_parsed, xpath = "/people/person[last()]")  # equivalent
 @
 
 
-\leftmarginpar{The magic of XSLT}
+\section{The magic of XSLT}
 Transforming to HTML!
 
 \section{Now it's your turn!}

@@ -294,10 +294,12 @@ So without a Schema, the parser does not know that age is an integer...
 \subsection{Providing an XML Schema}
 
 \subsection{Querying with XPath}
-It is actually ``impossible'' to access the second person (Adrian) in the list above. Let's use \XPath!
+Since the above list contains key duplicates (i.e., multiple person elements) it is ``difficult'' to access elements via keys and one might be tempted to use absolute indices... Let's use \XPath instead!
 <<>>=
-person_2 <- xml2::xml_find_all(xml_parsed, xpath = "/people/person[2]")
-xml2::xml_find_all(xml_parsed, xpath = "/people/person[last()]")  # equivalent
+## absolute
+adrian <- xml2::xml_find_all(xml_parsed, xpath = "/people/person[last()]")
+## does not depend on order...
+adrian <- xml2::xml_find_all(xml_parsed, xpath = "/people/person[name = 'Adrian']")
 @
 
 

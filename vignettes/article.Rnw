@@ -219,7 +219,7 @@ xmlns:f="https://www.w3schools.com/furniture">
 
 \XPath~can be used to navigate through elements and attributes in an \XML~document. It's purpose is to \textbf{select} part of an \XML~document.
 
-\marginpar{In Orbeon I think the purpose of \XPath~being a query language is a little hidden as we use it to define conditions for triggers (e.g., to trigger an error, flag a question as required, etc.). Usually, we simply select an element (\code{\$questionLabel})} and compare it to a value (i.e., we use one or two selectors and a comparison operator).
+\marginpar{In Orbeon I think the purpose of \XPath~being a query language is a little hidden as we use it to define conditions for triggers (e.g., to trigger an error, flag a question as required, etc.). Usually, we simply select an element (\code{\$questionLabel}) and compare it to a value (i.e., we use one or two selectors and a comparison operator).}
 
 \begin{itemize}
 \item \XPath~uses path expressions to navigate an \XML~document (much like navigating the file tree...).
@@ -243,13 +243,6 @@ Again, much like navigating the file tree in the terminal, the following path ex
 
 Here are some examples (with a context \XML~document) that get you going: \url{https://www.w3schools.com/xml/xml_xpath.asp}
 
-
-
-PROCEED HERE: \url{https://www.w3schools.com/xml/xml_xpath.asp}
-
-
-
-
 \section{XML schema}
 
 \url{https://www.w3schools.com/xml/schema_intro.asp}
@@ -259,6 +252,12 @@ PROCEED HERE: \url{https://www.w3schools.com/xml/xml_xpath.asp}
 \item Remember what we've said earlier about the data types?
 \item An \XML~schema describes the structure of an \XML~document and is itself written as \XML. Kind of elegant, no?
 \end{itemize}
+
+
+
+PROCEED HERE: \url{https://www.w3schools.com/xml/xml_schema.asp}
+
+
 
 \section{XML and Excel}
 \marginpar{The ``x'' in \code{.docx}, \code{.xlsx}, etc. actually is a reminecense of \XML. Change the ending of any such file to \code{.zip} and extract it to see that it is just a collection of files and in particular contains an XML representing the document structure/data.}
@@ -303,11 +302,93 @@ xml2::xml_find_all(xml_parsed, xpath = "/people/person[last()]")  # equivalent
 
 
 \section{The magic of XSLT}
-Transforming to HTML!
+
+\proglang{XSLT} stands for extensible stylesheet language transformations and is the recommended stylesheet language for \XML. A stylesheet language (such as \proglang{CSS}) is a type of computer language used to describe how structured documents should be presented. \proglang{XSLT} is far more sophisticated than \proglang{CSS} -- it can add/remove elements and attributes, rearrange, hide or sort elements, perform tests, and a lot more. \proglang{XSLT} uses \XPath~to find information in an \XML~document.
+
+For example, \proglang{XSLT} can be used to transform \XML~into \proglang{HTML}.
+
+Here is a minimal example:
+%
+\begin{xmlcode}
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- xml -->
+<people>
+  <person>
+    <name>John</name>
+    <age>33</age>
+  </person>
+  <person>
+    <name>Jane</name>
+    <age>34</age>
+  </person>
+</people>
+\end{xmlcode}
+%
+And here comes the stylesheet:
+%
+\begin{xmlcode}
+<?xml version="1.0"?>
+<!-- xslt -->
+<xsl:stylesheet version="1.0"
+xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+<xsl:template match="/">
+  <html>
+  <body>
+    <h2>Person details:</h2>
+    <table border="1">
+    <tr bgcolor="#9acd32">
+      <th>Name</th>
+      <th>Age</th>
+      </tr>
+      <xsl:for-each select="people/person">   <!-- Loop -->
+      <tr>
+      <td><xsl:value-of select="name"/></td>  <!-- Xpath -->
+      <td><xsl:value-of select="age"/></td>   <!-- Xpath -->
+      </tr>
+      </xsl:for-each>
+    </table>
+  </body>
+  </html>
+</xsl:template>
+</xsl:stylesheet>
+\end{xmlcode}
+%
+Which produces the following \proglang{HTML}:
+%
+\begin{xmlcode}
+<html>
+  <!-- html -->
+  <body>
+    <h2>Person details:</h2>
+    <table border="1">
+      <tbody>
+        <tr bgcolor="#9acd32">
+          <th>Name</th>
+          <th>Age</th>
+        </tr>
+        <tr>
+          <td>John</td>
+          <td>33</td>
+        </tr>
+        <tr>
+          <td>Jane</td>
+          <td>34</td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>
+\end{xmlcode}
 
 \section{Now it's your turn!}
 
-Little exercise...
+Here are some little exercises:
+%
+\begin{enumerate}
+\item Of course, you are not limited to output \proglang{HTML}! You could write an \proglang{XSLT} stylesheet that generates \R-code from \XML! Hint: Force plain text output with \xml{<xsl:output method="text" encoding="UTF-8"/>}.
+\end{enumerate}
+
 
 \section{Resources}
 \begin{itemize}

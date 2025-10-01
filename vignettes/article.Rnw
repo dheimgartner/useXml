@@ -29,14 +29,38 @@
 \newminted{bash}{bgcolor=Beige, bgcolorpadding=0.5em}
 \newcommand{\bash}[1]{\mintinline{bash}|#1|}
 
-\newminted{xml}{bgcolor=Beige, bgcolorpadding=0.5em}
-\newcommand{\xml}[1]{\mintinline{xml}|#1|}
+% \newminted{xml}{bgcolor=Beige, bgcolorpadding=0.5em}
+% \newcommand{\xml}[1]{\mintinline{xml}|#1|}
 
 \newcommand{\use}[1]{\code{#1}}
 
 \newcommand{\XML}{\proglang{XML}}
 \newcommand{\XPath}{\proglang{XPath}}
 
+\usepackage{Sweave}
+
+%% fancyvrb
+\usepackage{fancyvrb}
+\DefineVerbatimEnvironment{xmlcode}{Verbatim}{
+formatcom=\color{magenta},
+fontshape=sl
+}
+
+\newcommand{\xml}[1]{%
+{\color{magenta}\textsl{\Verb|#1|}}%
+}
+
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{
+formatcom=\color{magenta},
+fontshape=sl
+}
+
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{
+formatcom=\color{magenta},
+fontshape=sl
+}
+
+% \usepackage{Sweave}
 \SweaveOpts{engine=R, eps=FALSE, keep.source = TRUE}
 <<preliminaries, echo=FALSE, results=hide>>=
 options(prompt = " ",  continue = "   ", width = 70, useFancyQuotes = FALSE)
@@ -67,6 +91,8 @@ This is \XML:
 \end{xmlcode}
 %
 What do you think the above information represents? What could you do with the above representation?
+
+And this is \xml{<inline/>}!
 
 In the remainder, we will sometimes omit the prolog \xml{<?xml version="1.0" encoding="UTF-8"?>} to save some space...
 
